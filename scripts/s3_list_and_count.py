@@ -1,4 +1,5 @@
 import boto3
+import os
 
 def list_buckets():
     s3 = boto3.client('s3')
@@ -7,17 +8,20 @@ def list_buckets():
     for bucket in response['Buckets']:
         print(f" - {bucket['Name']}")
 
-def count_objects_in_bucket(bucket_name):
+def count_objects(bucket_name):
     s3 = boto3.client('s3')
-    count = 0
-    paginator = s3.get_paginator('list_objects_v2')
-    for page in paginator.paginate(Bucket=bucket_name):
-        if 'Contents' in page:
-            count += len(page['Contents'])
-    print(f"\nTotal objects in bucket '{bucket_name}': {count}")
+    response = s3.list_objects_v2(Bucket=bucket_name)
+    total_objects = response.get('KeyCount', 0)
+    print(f"\nTotal objects in bucket '{bucket_name}': {total_objects}")
 
 if __name__ == "__main__":
     list_buckets()
-    bucket_name = input("\nEnter the bucket name to count objects: ")
-    count_objects_in_bucket(bucket_name)
+    
+    # Read bucket name from ENVIRONMENT VARIABLE
+    bucket_name = os.environ.get('BUCKET_NAME')
+
+    if not bucket_name:
+        print("\n Error: BUCKET_NAME environment variable not set!")
+    else:
+        count_objects(bucket_name)
 
