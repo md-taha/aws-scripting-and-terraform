@@ -35,4 +35,5 @@ jobs:
       run: |
         cd scripts
         python3 s3_list_and_count.py
+      env: BUCKET_NAME: taha-assignment-bucket  
 
