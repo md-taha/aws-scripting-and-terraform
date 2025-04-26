@@ -1,35 +1,38 @@
-name: Simple CI/CD Pipeline
+name: AWS Scripting CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.x'
+        python-version: 3.12
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
-        pip install boto3
+        python3 -m pip install --upgrade pip
+        pip3 install boto3 pandas
 
-    - name: Run Python script (web server script)
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1  
+
+    - name: Run Python Script
       run: |
         cd scripts
         python3 s3_list_and_count.py
-
-    - name: Terraform Init
-      run: |
-        cd terraform-project
-        terraform init
 
