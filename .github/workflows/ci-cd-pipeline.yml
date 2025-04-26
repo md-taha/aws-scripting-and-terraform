@@ -1,19 +1,17 @@
-name: Python Script CI
+name: Simple CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Set up Python
@@ -21,14 +19,17 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install boto3
-      run: pip install boto3
-
-    - name: Run S3 List and Count Script
+    - name: Install dependencies
       run: |
-        python scripts/s3_list_and_count.py || echo "Skipping execution as AWS credentials are not configured."
+        pip install boto3
 
-    - name: Run CSV Analyzer Script
+    - name: Run Python script (web server script)
       run: |
-        python scripts/analyze_students.py || echo "Skipping execution since no input."
+        cd scripts
+        python3 s3_list_and_count.py
+
+    - name: Terraform Init
+      run: |
+        cd terraform-project
+        terraform init
 
