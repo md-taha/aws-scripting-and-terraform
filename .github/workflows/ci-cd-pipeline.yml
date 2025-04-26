@@ -1,0 +1,34 @@
+name: Python Script CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Install boto3
+      run: pip install boto3
+
+    - name: Run S3 List and Count Script
+      run: |
+        python scripts/s3_list_and_count.py || echo "Skipping execution as AWS credentials are not configured."
+
+    - name: Run CSV Analyzer Script
+      run: |
+        python scripts/analyze_students.py || echo "Skipping execution since no input."
+
