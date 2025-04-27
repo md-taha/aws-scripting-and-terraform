@@ -34,3 +34,7 @@ jobs:
         AWS_REGION: ap-south-1
         BUCKET_NAME: taha-assignment-bucket
 
+    - name: Run CSV Analysis Script
+      run: |
+         cd scripts
+         python3 students_grade_analysis.py --filename students.csv --threshold 60 
