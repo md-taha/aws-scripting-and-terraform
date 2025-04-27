@@ -54,7 +54,7 @@ jobs:
       - name: Zip Lambda function
         run: |
           cd lambda
-          zip ../lambda_function.zip lambda/lambda_function.py  # Adjust if your Lambda code is in a different file
+          zip ../lambda_function.zip lambda_function.py  # Adjust if your Lambda code is in a different file
         working-directory: ./terraform-project  # Make sure the path is correct based on where lambda code is located
 
       # Upload Lambda ZIP to S3
