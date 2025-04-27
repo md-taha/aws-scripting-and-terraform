@@ -61,6 +61,7 @@ jobs:
       - name: Upload Lambda ZIP to S3
         run: |
           aws s3 cp lambda_function.zip s3://${{ env.BUCKET_NAME }}/lambda_function.zip
+        working-directory: ./terraform-project  
         env:
           BUCKET_NAME: ${{ env.BUCKET_NAME }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
