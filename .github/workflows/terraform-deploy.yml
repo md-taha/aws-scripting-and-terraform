@@ -17,6 +17,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: 'ap-south-1'  # Update if your region is different
+      BUCKET_NAME: "taha-assignment-bucket-${{ github.run_id }}"
 
     steps:
       - name: Checkout code
@@ -32,11 +33,11 @@ jobs:
         working-directory: ./terraform-project
 
       - name: Terraform Plan
-        run: terraform plan -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=taha-assignment-bucket-2025"
+        run: terraform plan -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=${{ env.BUCKET_NAME }}"
         working-directory: ./terraform-project
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=taha-assignment-bucket-2025"
+        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=${{ env.BUCKET_NAME }}"
         working-directory: ./terraform-project
         continue-on-error: true
 
