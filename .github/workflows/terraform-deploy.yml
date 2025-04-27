@@ -1,0 +1,41 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: 'ap-south-1'  # Update if your region is different
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.4   # Or whatever version you prefer
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform-project
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./terraform-project
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=Ec2.pem" -var="bucket_name=taha-assignment-bucket-2025"
+        working-directory: ./aws-scripting-and-terraform/terraform-project
+
