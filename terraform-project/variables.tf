@@ -16,3 +16,6 @@ variable "bucket_name" {
   description = "Name of the S3 bucket"
 }
 
+variable "lambda_zip_path" {
+  description = "Path of lambda_function.zip file"
+}
