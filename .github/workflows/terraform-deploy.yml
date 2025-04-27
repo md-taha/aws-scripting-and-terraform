@@ -39,16 +39,36 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=${{ env.BUCKET_NAME }}"
         working-directory: ./terraform-project
-        continue-on-error: true
 
+      # Create S3 bucket dynamically using GitHub run_id
+      - name: Create S3 bucket
+        run: |
+          aws s3 mb s3://${{ env.BUCKET_NAME }} --region ${{ env.AWS_REGION }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+
+      # Ensure Lambda ZIP exists by creating it if it's not already created
+      - name: Zip Lambda function
+        run: |
+          mkdir -p lambda
+          zip -r lambda/lambda_function.zip lambda/lambda_function.py  # Adjust if your Lambda code is in a different file
+        working-directory: ./terraform-project  # Make sure the path is correct based on where lambda code is located
+
+      # Upload Lambda ZIP to S3
       - name: Upload Lambda ZIP to S3
         run: |
-          aws s3 cp lambda/lambda_function.zip s3://$BUCKET_NAME/lambda_function.zip
+          aws s3 cp lambda/lambda_function.zip s3://${{ env.BUCKET_NAME }}/lambda_function.zip
         env:
           BUCKET_NAME: ${{ env.BUCKET_NAME }}
-
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+        
       # Optional: Terraform Apply for Lambda Deployment
       - name: Terraform Apply for Lambda Deployment
-        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=${{ env.BUCKET_NAME }}" -var="lambda_zip_path=s3://$BUCKET_NAME/lambda_function.zip"
+        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=${{ env.BUCKET_NAME }}" -var="lambda_zip_path=s3://${{ env.BUCKET_NAME }}/lambda_function.zip"
         working-directory: ./terraform-project
-        continue-on-error: true 
+        continue-on-error: true
+
