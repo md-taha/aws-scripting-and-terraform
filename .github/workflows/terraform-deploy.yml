@@ -32,7 +32,7 @@ jobs:
         working-directory: ./terraform-project
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -var="instance_type=t2.micro" -var="key_name=Ec2.pem" -var="bucket_name=taha-assignment-bucket-2025"
         working-directory: ./terraform-project
 
       - name: Terraform Apply
