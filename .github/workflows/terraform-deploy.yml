@@ -41,3 +41,14 @@ jobs:
         working-directory: ./terraform-project
         continue-on-error: true
 
+      - name: Upload Lambda ZIP to S3
+        run: |
+          aws s3 cp lambda/lambda_function.zip s3://$BUCKET_NAME/lambda_function.zip
+        env:
+          BUCKET_NAME: ${{ env.BUCKET_NAME }}
+
+      # Optional: Terraform Apply for Lambda Deployment
+      - name: Terraform Apply for Lambda Deployment
+        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=${{ env.BUCKET_NAME }}" -var="lambda_zip_path=s3://$BUCKET_NAME/lambda_function.zip"
+        working-directory: ./terraform-project
+        continue-on-error: true 
