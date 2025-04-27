@@ -32,11 +32,11 @@ jobs:
         working-directory: ./terraform-project
 
       - name: Terraform Plan
-        run: terraform plan -var="instance_type=t2.micro" -var="key_name=EC2.pem" -var="bucket_name=taha-assignment-bucket-2025"
+        run: terraform plan -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=taha-assignment-bucket-2025"
         working-directory: ./terraform-project
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2.pem" -var="bucket_name=taha-assignment-bucket-2025"
+        run: terraform apply -auto-approve -var="instance_type=t2.micro" -var="key_name=EC2" -var="bucket_name=taha-assignment-bucket-2025"
         working-directory: ./terraform-project
         continue-on-error: true
 
