@@ -18,4 +18,7 @@ variable "bucket_name" {
 
 variable "lambda_zip_path" {
   description = "Path of lambda_function.zip file"
+  type        = string
+  default     = ""
 }
+
